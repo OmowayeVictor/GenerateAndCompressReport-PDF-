@@ -1,0 +1,48 @@
+## Build results
+bin/
+obj/
+*.exe
+*.dll
+*.pdb
+
+## User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## Visual Studio settings
+.vscode/
+.vs/
+
+## Rider settings
+.idea/
+
+## OS junk
+.DS_Store
+Thumbs.db
+
+## Logs
+*.log
+
+## NuGet
+*.nupkg
+packages/
+project.lock.json
+project.fragment.lock.json
+
+## Others
+*.cache
+*.dbmdl
+
+## Dotnet-specific
+*.deps.json
+*.runtimeconfig.json
+*.runtimeconfig.dev.json
+
+
+#env
+.env
+
+#Temp files
+*.tmp
