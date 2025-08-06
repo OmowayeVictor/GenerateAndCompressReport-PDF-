@@ -93,17 +93,17 @@ namespace GenerateAndCompressPDF
                 var subregion = "AFR";
                 if (getReportType == "WTM")
                 {
-                    Console.WriteLine("Subregion ? Choose either of SAFR, EAFR, WAFR, NGR");
+                    Console.WriteLine(">>>Subregion ? Choose either of SAFR, EAFR, WAFR, NGR");
                     subregion = Console.ReadLine()?.ToUpper()!;
                     while (!new[] { "SAFR", "WAFR", "EAFR", "NGR" }.Contains(subregion))
                     {
-                        Console.WriteLine("Invalid input. Please enter  either of SARF, EAFR, WAFR, NG without space please.");
+                        Console.WriteLine(">>>Invalid input. Please enter  either of SARF, EAFR, WAFR, NG without space please.");
                         subregion = Console.ReadLine()?.ToUpper()!;
                     }
                 }
 
                 Console.WriteLine();
-                Console.WriteLine("Report Period  (YYYYMM) ? ");
+                Console.WriteLine(">>Report Period  (YYYYMM) ? ");
                 var reportPeriod = Console.ReadLine();
 
                 Console.WriteLine();
@@ -113,12 +113,12 @@ namespace GenerateAndCompressPDF
                     var qualifiers = new Database(query).GetDetailsFromDB();
 
                   
-                    Console.WriteLine($"Total Customers to pull reports for : {qualifiers.Count()}");
+                    Console.WriteLine($">>>Total Customers to pull reports for : {qualifiers.Count()}");
                     var pdfBuffers = new List<byte[]>();
                     int counter = 1;
                     foreach (var qualifier in qualifiers)
                     {
-                        Console.WriteLine($"{counter}. Fetching Report for {qualifier["CustomerID"]}");
+                        Console.WriteLine($">>>{counter}. Fetching Report for {qualifier["CustomerID"]}");
                         var CustomerID = qualifier["CustomerID"].ToString();
                         byte[] pdfBuffer = await ssrsReport.FetchBufferAsync(isMexico: null, CustomerID!, reportPeriod!, reportType: "Business Profile");
                         counter++;
@@ -139,14 +139,14 @@ namespace GenerateAndCompressPDF
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Error: {ex.Message}");
+                    Console.WriteLine($">>>Error: {ex.Message}");
                 }
                 finally
                 {
                     string tempMergedPdfPath = Path.Combine(Path.GetTempPath(), "merged.pdf");
                     File.Delete(tempMergedPdfPath);
                 }
-                Console.WriteLine("Do You Want To Run Again ? (y/n)");
+                Console.WriteLine(">>>Do You Want To Run Again ? (y/n)");
                 retry = Console.ReadLine()?.Trim().ToLower()!;
             }
             while(retry?.ToLower() is "yes" or "y");

@@ -32,7 +32,7 @@ namespace GenerateAndCompressPDF
                     CreateNoWindow = true
                 };
 
-                using (var process = Process.Start(processStartInfo))
+                using (Process process = Process.Start(processStartInfo))
                 {
                     if (process == null)
                     {
@@ -45,7 +45,7 @@ namespace GenerateAndCompressPDF
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"FindGhostscript: {ex.Message}");
+                Console.WriteLine($">>>FindGhostscript: {ex.Message}");
                 return null;
             }
         }
@@ -74,12 +74,9 @@ namespace GenerateAndCompressPDF
 
             try
             {
-                string args = $@"
-                           -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 \
-                           -dPDFSETTINGS=/ebook \
-                           -dNOPAUSE -dQUIET -dBATCH \
-                           -sOutputFile={outputFilePath}.pdf {inputFilePath}.pdf
-                        ";
+                string args = $"-sDEVICE=pdfwrite -dCompatibilityLevel=1.4 " +
+                      "-dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH " +
+                      $"-sOutputFile=\"{outputFilePath}\" \"{inputFilePath}\"";
 
                 ProcessStartInfo startProcess = new ProcessStartInfo
                 {
@@ -91,23 +88,29 @@ namespace GenerateAndCompressPDF
                 using (Process? process = Process.Start(startProcess))
                 {
                     process!.WaitForExit();
+
+                    if (process.ExitCode != 0 || !File.Exists(outputFilePath))
+                    {
+                        Console.WriteLine($">>> Ghostscript failed or file missing. ExitCode: {process.ExitCode}");
+                        throw new Exception(">>>Ghostscript compression failed");
+                    }
+
                 }
-                Console.WriteLine($"Successfully compressed and merged PDFs into: {outputFilePath}");
+                    Console.WriteLine($">>>Successfully compressed and merged PDFs: {outputFilePath}");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error compressing and merging PDF's: {ex.Message}");
+                Console.WriteLine($">>>Error compressing and merging PDF: {ex.Message}");
                 try
                 {
 
                     File.Copy(inputFilePath, outputFilePath, overwrite: true);
-                    Console.WriteLine($"Fallback successful: {inputFilePath} copied to {outputFilePath}");
+                    Console.WriteLine($">>>Fallback successful: {inputFilePath} copied to {outputFilePath}");
                 }
                 catch (Exception copyEx)
                 {
-                    Console.WriteLine($"Error during fallback copy: {copyEx.Message}");
+                    Console.WriteLine($">>>Error during fallback copy: {copyEx.Message}");
                 }
-                ;
             }
            
 
